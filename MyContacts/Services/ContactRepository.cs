@@ -11,11 +11,12 @@ namespace MyContacts
     {
 
         //private string myConnection = "Data Source=.,Initial Catalog=Contact_DB,Integrated Security=yes";
-        private string myConnection = "Data Source=.;" + "Initial Catalog=Contact_DB;" + "Integrated Security=SSPI;";
+
+        private string connectionString = "Data Source=.;" + "Initial Catalog=Contact_DBxxx;" + "Integrated Security=SSPI;";
 
         public bool Add(string name, string family, int age, string mobile)
         {
-            SqlConnection connection = new SqlConnection(myConnection);
+            SqlConnection connection = new SqlConnection(connectionString);
             try
             {
                 string query = "Insert Into MyContacts(Name,Family,Age,Mobile) values(@Name,@Family,@Age,@Mobile)";
@@ -41,7 +42,7 @@ namespace MyContacts
 
         public bool Delete(int contactID)
         {
-            SqlConnection connection = new SqlConnection(myConnection);
+            SqlConnection connection = new SqlConnection(connectionString);
             try
             {
                 string query = "Delete From MyContacts Where ContactID=@Id";
@@ -63,12 +64,12 @@ namespace MyContacts
 
         public bool Edit(int contactID, string name, string family, int age, string mobile)
         {
-            SqlConnection connection = new SqlConnection(myConnection);
+            SqlConnection connection = new SqlConnection(connectionString);
             try
             {
                 string query = "Update MyContacts Set Name=@Name,Family=@Family,Age=@Age,Mobile=@Mobile Where ContactID=@id";
                 SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@id",contactID);
+                command.Parameters.AddWithValue("@id", contactID);
                 command.Parameters.AddWithValue("@Name", name);
                 command.Parameters.AddWithValue("@Family", family);
                 command.Parameters.AddWithValue("@Age", age);
@@ -81,7 +82,7 @@ namespace MyContacts
             {
                 return false;
             }
-            finally 
+            finally
             {
                 connection.Close();
             }
@@ -90,9 +91,9 @@ namespace MyContacts
         public DataTable Search(string parameter)
         {
             string query = "Select * From MyContacts Where Name like @parameter or Family like @parameter";
-            SqlConnection connection = new SqlConnection(myConnection);
+            SqlConnection connection = new SqlConnection(connectionString);
             SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
-            adapter.SelectCommand.Parameters.AddWithValue("@parameter","%"+ parameter +"%");
+            adapter.SelectCommand.Parameters.AddWithValue("@parameter", "%" + parameter + "%");
             DataTable data = new DataTable();
             adapter.Fill(data);
             return data;
@@ -100,22 +101,53 @@ namespace MyContacts
 
         public DataTable SelectAll()
         {
+            //try
+            //{
+            //    string query = "Select * From MyContacts";
+            //    SqlConnection connection = new SqlConnection(connectionString);
+            //    SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+            //    DataTable data = new DataTable();
+            //    adapter.Fill(data);
+            //    return data;
+            //}
+            //catch (Exception)
+            //{
+            //    return null;
+            //}
+
             string query = "Select * From MyContacts";
-            SqlConnection connection = new SqlConnection(myConnection);
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+            DataTable data = new DataTable();
+            adapter.Fill(data);
+            return data;
+
+        }
+
+        public DataTable SelectRow(int contactID)
+        {
+            string query = "Select * From MyContacts Where ContactID=" + contactID;
+            SqlConnection connection = new SqlConnection(connectionString);
             SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
             DataTable data = new DataTable();
             adapter.Fill(data);
             return data;
         }
 
-        public DataTable SelectRow(int contactID)
+        public bool isValidConnectionString()
         {
-            string query = "Select * From MyContacts Where ContactID=" + contactID;
-            SqlConnection connection = new SqlConnection(myConnection);
-            SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
-            DataTable data = new DataTable();
-            adapter.Fill(data);
-            return data;
+            try
+            {
+                //SqlConnectionStringBuilder checkConnection = new SqlConnectionStringBuilder(connectionString);
+                SqlConnection connection = new SqlConnection();
+                connection.Open();
+                connection.Close();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

@@ -14,6 +14,7 @@ namespace MyContacts
         public bool Add(string name, string family, int age, string mobile);
         public bool Edit(int contactID, string name, string family, int age, string mobile);
         public bool Delete(int contactID);
+        public bool isValidConnectionString();
 
     }
 }

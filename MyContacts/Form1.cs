@@ -27,8 +27,16 @@ namespace MyContacts
 
         private void BindGrid()
         {
-            dgContact.AutoGenerateColumns = false;
-            dgContact.DataSource = repository.SelectAll();
+            if (repository.isValidConnectionString())
+            {
+                dgContact.AutoGenerateColumns = false;
+                dgContact.DataSource = repository.SelectAll();
+            }
+            else
+            {
+                MessageBox.Show("خطا در ارتباط با سرور");
+            }
+
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
